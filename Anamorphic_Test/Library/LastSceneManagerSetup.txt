@@ -1,0 +1,5 @@
+sceneSetups:
+- path: Assets/Scenes/Off_Axis.unity
+  isLoaded: 1
+  isActive: 1
+  isSubScene: 0
