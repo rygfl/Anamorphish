@@ -43,7 +43,7 @@ face_mesh = mp_face.FaceMesh(
 # 지수 이동 평균(EMA)으로 좌표 스무딩
 # ─────────────────────────────────────
 ema = None
-alpha = 0.3  # 0.2~0.4 사이 정도로 조절
+alpha = 0.5  # 0.2~0.4 사이 정도로 조절
 
 try:
     while True:
