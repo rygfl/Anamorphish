@@ -7,10 +7,11 @@ using System.Threading;
 public class SocketTest : MonoBehaviour
 {
     [Header("Position Settings")]
-    public float moveScaleX = 2.0f; // ÁÂ¿ì ÀÌµ¿ ¹Î°¨µµ
-    public float moveScaleY = 2.0f; // »óÇÏ ÀÌµ¿ ¹Î°¨µµ
+    public float moveScaleX = 2.0f; // ï¿½Â¿ï¿½ ï¿½Ìµï¿½ ï¿½Î°ï¿½ï¿½ï¿½
+    public float moveScaleY = 2.0f; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½Î°ï¿½ï¿½ï¿½
+    public float moveScaleZ = 2.0f; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½Î°ï¿½ï¿½ï¿½
 
-    private float faceX, faceY;
+    private float faceX, faceY, faceZ;
     private UdpClient udp;
     private Thread receiveThread;
 
@@ -28,8 +29,9 @@ public class SocketTest : MonoBehaviour
     {
         float moveX = faceX * moveScaleX;
         float moveY = -faceY * moveScaleY;
+        float moveZ = faceZ * moveScaleZ;
 
-        Camera.main.transform.localPosition += new Vector3(moveX, moveY, 0);
+        Camera.main.transform.localPosition += new Vector3(moveX, moveY, moveZ);
     }
 
     void ReceiveData()
@@ -45,6 +47,7 @@ public class SocketTest : MonoBehaviour
 
                 faceX = json.offset_x;
                 faceY = json.offset_y;
+                faceZ = json.offset_z;
             }
             catch { }
         }
@@ -55,6 +58,7 @@ public class SocketTest : MonoBehaviour
     {
         public float offset_x;
         public float offset_y;
+        public float offset_z;
     }
 
     void OnApplicationQuit()
