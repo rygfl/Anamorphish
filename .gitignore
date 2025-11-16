@@ -306,3 +306,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,unity,python,windows
+Realsense/.vscode/extensions.json
+Realsense/.vscode/launch.json
+Realsense/.vscode/settings.json
