@@ -2535,7 +2535,7 @@ MonoBehaviour:
   sensorOrigin: {fileID: 14302047}
   targetCamera: {fileID: 330585545}
   worldScale: 1000
-  positionLerp: 0.1
+  positionLerp: 0.05
   useDepth: 1
   fixedDistanceMeters: 1
   depthGain: 0.2
