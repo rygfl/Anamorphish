@@ -3,7 +3,7 @@ import mediapipe as mp
 import pyrealsense2 as rs
 import numpy as np
 import socket
-import json
+import struct
 import time
 
 # ─────────────────────────────────────
@@ -20,8 +20,8 @@ pipeline = rs.pipeline()
 config = rs.config()
 
 # 해상도/프레임레이트는 필요에 따라 조절
-config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
-config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 60)
+config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
 
 pipeline.start(config)
 
@@ -43,7 +43,7 @@ face_mesh = mp_face.FaceMesh(
 # 지수 이동 평균(EMA)으로 좌표 스무딩
 # ─────────────────────────────────────
 ema = None
-alpha = 0.5  # 0.2~0.4 사이 정도로 조절
+alpha = 1  # 0.2~0.4 사이 정도로 조절
 
 try:
     while True:
@@ -124,13 +124,9 @@ try:
             Xs, Ys, Zs = ema.tolist()
 
             # UDP 페이로드 (RealSense 좌표 그대로: X 오른쪽+, Y 아래+, Z 앞+)
-            payload = {
-                "x": float(Xs),
-                "y": float(Ys),
-                "z": float(Zs),
-                "ts": time.time()
-            }
-            sock.sendto(json.dumps(payload).encode("utf-8"), (UDP_IP, UDP_PORT))
+            # 이진 포맷: 3개의 float (x, y, z) + 1개의 double (timestamp) = 20 bytes
+            payload = struct.pack('fffd', float(Xs), float(Ys), float(Zs), time.time())
+            sock.sendto(payload, (UDP_IP, UDP_PORT))
 
             # 디버그용 시각화
             cv2.circle(color_image, (lx, ly), 3, (0, 255, 0), -1)

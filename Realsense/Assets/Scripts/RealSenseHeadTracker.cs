@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 
 /// <summary>
@@ -51,16 +50,6 @@ public class RealSenseHeadTracker : MonoBehaviour
 
     private bool hasBaselineZ = false;
     private float baselineZ = 0f;   // 첫 인식 시 거리 (미터)
-
-    [System.Serializable]
-    private class FaceData
-    {
-        // Python 쪽에서 {"x":..., "y":..., "z":..., "ts":...} 형태로 보내는 것을 가정
-        public float x;
-        public float y;
-        public float z;
-        public double ts;
-    }
 
     void Start()
     {
@@ -137,12 +126,19 @@ public class RealSenseHeadTracker : MonoBehaviour
             try
             {
                 byte[] data = udp.Receive(ref anyIP);
-                string text = Encoding.UTF8.GetString(data);
 
-                FaceData fd = JsonUtility.FromJson<FaceData>(text);
-                // raw RealSense 좌표 그대로 저장 (미터)
-                latestRawRS = new Vector3(fd.x, fd.y, fd.z);
-                hasData = true;
+                // 이진 포맷: 3개의 float (x, y, z) + 1개의 double (timestamp) = 20 bytes
+                if (data.Length >= 20)
+                {
+                    float x = System.BitConverter.ToSingle(data, 0);
+                    float y = System.BitConverter.ToSingle(data, 4);
+                    float z = System.BitConverter.ToSingle(data, 8);
+                    // double ts = System.BitConverter.ToDouble(data, 12); // 필요시 사용
+
+                    // raw RealSense 좌표 그대로 저장 (미터)
+                    latestRawRS = new Vector3(x, y, z);
+                    hasData = true;
+                }
             }
             catch
             {
