@@ -2,62 +2,31 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField]
-    private float _cameraSpeed = 100.0f;
+    [Header("Transforms")]
+
+    [Tooltip("시점을 따라 움직일 카메라 (보통 Main Camera)")]
+    public Camera targetCamera;
 
     [SerializeField]
-    private Vector3 _intialCamPos = new Vector3(0, 1641, 1038);       //초기 카메라 위치 => 전시장 입구로 지정?, 추후 사람을 인식받지 않을 때 되돌아 가도록 구현해야 함.
+    [Tooltip("카메라 입력 값 설정 : KeyBoardProvider(키보드 입력) or RealSenseProvider(리얼센스 값)")]
+    private MonoBehaviour providerComponent;                    //직접 사용할 컴포넌트 드래그 앤 드롭
 
-    void Start()
-    {
-        transform.position = _intialCamPos;
-    }
+    private ICameraProvider provider;
 
-    // Update is called once per frame
-    void LateUpdate()
-    {
-        OnKeyboard();
-    }
-
-    //상하좌우 카메라 위치 이동
-    void OnKeyboard()
+	private void Start()
 	{
-        if (Input.GetKey(KeyCode.W))
-		{
-            transform.position += Vector3.up * Time.deltaTime * _cameraSpeed;
+        if (providerComponent != null)
+            provider = providerComponent as ICameraProvider;
 
-        }
-
-        if (Input.GetKey(KeyCode.S))
-		{
-            transform.position += Vector3.down * Time.deltaTime * _cameraSpeed;
-        }
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            transform.position += Vector3.left * Time.deltaTime * _cameraSpeed;
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.position += Vector3.right * Time.deltaTime * _cameraSpeed;
-        }
-
-        if (Input.GetKey(KeyCode.Q))
-        {
-            transform.position += Vector3.forward * Time.deltaTime * _cameraSpeed;
-        }
-
-        if (Input.GetKey(KeyCode.E))
-        {
-            transform.position += Vector3.back * Time.deltaTime * _cameraSpeed;
-        }
-
-
-        //처음 위치로
-        if (Input.GetKey(KeyCode.R))
-        {
-            transform.position = _intialCamPos;
-        }
+        if (targetCamera == null)
+            targetCamera = Camera.main;
     }
+
+	private void Update()
+	{
+        if (!provider.HasData()) { Debug.Log($"{provider.GetType().Name} does not have data"); }
+        if (targetCamera == null) { Debug.Log("targetCamera is null"); }
+
+        targetCamera.transform.position = provider.GetCameraPosition();
+	}
 }

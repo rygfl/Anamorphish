@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 public class ObliqueProjectionToQuad_URP : MonoBehaviour
 {
     public GameObject projectionScreen;
-    public bool estimateViewFrustum = true;
+    public bool estimateViewFrustum = false;
     public bool setNearClipPlane = false;
     public float minNearClipDistance = 0.0001f;
     public float nearClipDistanceOffset = -0.01f;
